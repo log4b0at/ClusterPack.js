@@ -1,6 +1,6 @@
 # cluster-ui
 
-<img src='./../logo.png' style='display:block;margin:auto;'/>
+<img src='./../logo.png' style='display:block;margin:auto;' width='200'/>
 
 ### cluster-ui-input
 
