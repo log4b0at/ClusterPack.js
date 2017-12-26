@@ -1,0 +1,70 @@
+cluster-input{
+    display:inline-block;
+    border:1px solid #222;
+    cursor:text;
+    color:#ddd;
+    line-height: 100%;
+    width: 250px;
+    overflow: hidden;
+    word-wrap: initial;
+    white-space: nowrap;
+    padding:2px;
+    background-color:#333;
+    border-radius:3.333px;
+    font-size: 20px;
+    font-family: monospace;
+    padding:15px;
+}
+
+cluster-input[contenteditable=false]{
+    filter:grayscale(1);
+    cursor:default;
+}
+
+cluster-input.error{
+    text-decoration:underline;
+    text-decoration-style:wavy;
+    text-decoration-color: red;
+    outline: 2px solid red;
+    outline-style: dashed;
+}
+
+cluster-input::selection, cluster-input *::selection {
+    color: inherit;
+    background-color:#00bcd41f;
+}
+
+
+.cui-var{
+    color:#78a191;
+}
+
+.cui-atom{
+    color:#dc99ec;
+}
+
+.cui-number{
+    color:#FF9800;
+}
+
+.cui-method{
+    color:#8bbbc6;
+}
+
+.cui-method.know{
+    color:#45ae7e;
+}
+
+/*
+
+@future
+
+.cui-exposed{
+    position: relative;
+    bottom: 8px;
+    font-size: 75%;
+}
+
+.cui-exposant{
+    display:none;
+}*/
