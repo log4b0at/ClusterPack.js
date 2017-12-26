@@ -1,0 +1,36 @@
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <link rel="stylesheet" href="./../test/style.css"/>
+        <link rel="stylesheet" href="stylesheets/component.css"/>
+    </head>
+    <body>
+        <h2>CLUSTER-UI-INPUT</h2>
+        <div id='test'>
+        </div>
+        <span id='rexec'></span>
+        <hr />
+        <pre id='code'>NOTHING HERE!</pre>
+    </body>
+    <script id='cluster' src="./../../cluster.js"></script>
+    <script id='cluster_ui' src="./../component.js"></script>
+    <script id='cluster_ui_input' src="component.js"></script>
+    <script id='cluster_ui_lib_math' src="./../lib/math/math.js"></script>
+    <script>var test = document.getElementById('test');</script>
+    <script id='component_code'>
+        var rexec = document.getElementById('rexec');
+        var e = new Cluster.Ui.Input('math');
+        e.type = 'math';
+        test.appendChild(e);
+
+
+        e.addEventListener('change', ()=> {
+            var x = "<b>e.exec()</b> = <code>"+e.exec()+"</code><br/>";
+            x+= "<b>e.value</b> = <code>"+e.value+"</code><br/>";
+            rexec.innerHTML = x;
+        });
+    </script>
+    <script>
+        document.getElementById('code').textContent = document.getElementById('component_code').innerHTML;
+    </script>
+</html>
