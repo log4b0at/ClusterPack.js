@@ -104,6 +104,45 @@ Cluster.Ui.Input = class Input extends Cluster.Ui.Component{
     }
 
     _initConfig(){
+        this.options = {
+            typename: 'math',
+            knowMethods: [
+                'sin',
+                'cos',
+                'asin',
+                'acos',
+                'log',
+                'sqrt',
+                'random',
+                'round'
+            ],
+            knowVariables:{
+                'pi': {
+                    symbol: 'π',
+                    value: 3.141592653589793
+                },
+                'phi': {
+                    symbol: 'φ',
+                    value: 1.618033988749894
+                },
+                'euler':{
+                    symbol: 'ℇ',
+                    value: 2.718281828459045
+                },
+                'tau':{
+                    symbol: 'τ',
+                    value: 6.283185307179586
+                }
+            },
+            knowAtoms: [
+                'infinity',
+                'null',
+                'not',
+                'and',
+                'or',
+                'xor'
+            ]
+        };
         this.setKnowVariables(this.options.knowVariables);
         this.setKnowAtoms(this.options.knowAtoms);
     }
@@ -116,7 +155,7 @@ Cluster.Ui.Input = class Input extends Cluster.Ui.Component{
         this.addEventListener('keydown', (e) => this.keydown(e));
         this.addEventListener('blur', (e) => this._checkChange(e));
         this.addEventListener('change', (e) => {
-            this.value_last_change = this.value;
+            this.value_last_change = this.textContent;
             this.compile();
         });
         this.addEventListener('error', (e) => this.className = "error");
@@ -141,7 +180,7 @@ Cluster.Ui.Input = class Input extends Cluster.Ui.Component{
     }
 
     _checkChange(){
-        if(this.value_last_change != this.value){
+        if(this.value_last_change != this.textContent){
             this.dispatchEvent(new Event('change'));
         }
     }
@@ -268,24 +307,36 @@ Cluster.Ui.Input = class Input extends Cluster.Ui.Component{
         this.update();
     }
 
-    get value(){
-        return this.textContent;
-    }
-
-    set value(v){
-        this.update(false, v);
-        this._checkChange();
-    }
 
     compile(){
         try{
             var build = this;
             var out = this.textContent.replace(new RegExp(this.knowVariablesReg, 'gi'), (r) => build.getVariableKnowSymbol(r).value);
             var compiled = math.compile(out);
-            compiled.eval();
+            var _eval = compiled.eval();
+            var type = this.type;
+
+            if(type || type != 'number'){
+                console.log(_eval);
+                if(typeof(_eval) == 'object'){
+                    var typekey = _eval.units[0].unit.base.key.toLowerCase();
+                    if(typekey != type.toLowerCase()){
+                        throw new TypeError('Invalid measure: Need "'+type.toLowerCase()+'" but the entry is "'+typekey+'"');
+                    }
+                }
+            }
+            else{
+                if(typeof(_eval) == 'object'){
+                    var typekey = _eval.units[0].unit.base.key.toLowerCase();
+                    throw new TypeError('Invalid measure: Need "number" but the entry is "'+typekey+'"');
+                }
+            }
+
+
             this.dispatchEvent(new Event('success'));
             this.compiled = compiled;
             this.error = false;
+            this.title = '';
         }
         catch(e){
             this.error = e.message;
@@ -296,72 +347,36 @@ Cluster.Ui.Input = class Input extends Cluster.Ui.Component{
                     type: e.type
                 }
             }));
+            this.title = this.error;
 
         }
     }
 
-    exec(){
+    set type(v){
+        this.setAttribute('type', v || 'number');
+    }
+
+    get type(){
+        return this.getAttribute('type') || number;
+    }
+
+    set unit(v){
+        this.setAttribute('unit', v || false);
+    }
+
+    get unit(){
+        return this.getAttribute('unit') || 'number';
+    }
+
+    get value(){
         if(this.compiled){
             return this.compiled.eval() || false;
         }
     }
 
-
-
-    set type(type){
-        if(type == 'math'){
-            this.options = {
-                typename: 'math',
-                knowMethods: [
-                    'sin',
-                    'cos',
-                    'asin',
-                    'acos',
-                    'log',
-                    'ln',
-                    'sqrt',
-                    'random',
-                    'round'
-                ],
-                knowVariables:{
-                    'pi': {
-                        symbol: 'π',
-                        value: 3.141592653589793
-                    },
-                    'phi': {
-                        symbol: 'φ',
-                        value: 1.618033988749894
-                    },
-                    'euler':{
-                        symbol: 'ℇ',
-                        value: 2.718281828459045
-                    },
-                    'tau':{
-                        symbol: 'τ',
-                        value: 6.283185307179586
-                    }
-                },
-                knowAtoms: [
-                    'infinity',
-                    'null',
-                    'not',
-                    'and',
-                    'or',
-                    'xor'
-                ]
-            };
-        }
-        else{
-            this.options = {
-                knowMethods:[],
-                knowVariables:{},
-                knowAtoms:[]
-            }
-        }
-    }
-
-    get type(){
-        return this.options.type || 'unknow';
+    set value(v){
+        this.update(false, v);
+        this._checkChange();
     }
 
 }
