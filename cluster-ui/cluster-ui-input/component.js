@@ -183,11 +183,12 @@ Cluster.Ui.Input = class Input extends Cluster.Ui.Component{
         }
     }
 
-    update(e, v){
+
+    update(e, value){
         var pos = getCurrentCursorPosition(this);
         var length = this.textContent.length;
 
-        this.contentUpdate(v);
+        this.updateContent(value);
 
         if(pos-1 <= this.textContent.length){
             if(this.textContent.length == 0 || pos == 0) return;
@@ -199,78 +200,38 @@ Cluster.Ui.Input = class Input extends Cluster.Ui.Component{
         }
     }
 
-    contentUpdate(v){
-        var a = v || this.textContent;
+
+    /**
+     * updateContent - update highlight of current content, or specified content
+     *
+     * @param  {type} [value=this.textContent] value
+     * @return {void}
+     */
+    updateContent(value){
+        // Store a value, value of the textContent of this.
+        value = value || this.textContent;
+
         if(this.knowVariablesReg) {
-            a = a.replace(new RegExp(this.knowVariablesAliasReg,"gi"), (m,r) => this.getSymbolKnowAlias(m));
-            a = a.replace(new RegExp(this.knowVariablesReg,"gi"), (m,r) => this._getHighlightKnowVariables(m));
+            value = value.replace(new RegExp(this.knowVariablesAliasReg,"gi"), (m,r) => Input.getSymbolKnowAlias(this, m));
+            value = value.replace(new RegExp(this.knowVariablesReg,"gi"), (m,r) => Input.getHighlightKnowVariables(this, m));
         }
-        if(this.knowAtomsReg) a = a.replace(new RegExp(this.knowAtomsReg,"gi"), (m,r,c) => this._getHighlightKnowAtoms(m, r,c));
-        a = a.replace(/([0-9]+)/g,'<span class="cui-number">$1</span>');
-        a = a.replace(/([a-zA-Z]+)\(/g, (m,r) => this._getHighlightKnowMethods(r));
-        this.innerHTML = a;
-    }
 
-    _getHighlightKnowMethods(r){
-        if(this.options.knowMethods){
-            if(this.options.knowMethods.indexOf(r)!=-1){
-                return '<span class="cui-method know">'+r+'</span>(';
-            }
+        if(this.knowAtomsReg){
+            value = value.replace(new RegExp(this.knowAtomsReg,"gi"), (m) => Input.getHighlightKnowAtoms(this, m));
         }
-        return '<span class="cui-method unknow">'+r+'</span>(';
+
+        value = value.replace(/([0-9]+)/g,'<span class="cui-number">$1</span>');
+        value = value.replace(/([a-zA-Z]+)\(/g, (m,r) => Input.getHighlightKnowMethods(this, r));
+
+        this.innerHTML = value;
     }
 
-    getSymbolKnowAlias(alias){
-        alias = alias.toLowerCase();
-        if(this.options.knowVariables[alias]){
-            return this.options.knowVariables[alias].symbol;
-        }
-        return false;
-    }
-
-    getVariableKnowAlias(alias){
-        alias = alias.toLowerCase();
-        var r;
-        if(r = this.options.knowVariables[alias]) return r;
-        return false;
-    }
-
-    getVariableKnowSymbol(symbol){
-        var knowVariables = this.options.knowVariables;
-        for (var i in knowVariables){
-            if(knowVariables[i].symbol == symbol){
-                return knowVariables[i];
-            }
-        }
-        return false;
-    }
-
-    getAliasKnowSymbol(symbol){
-        var knowVariables = this.options.knowVariables;
-        for (var i in knowVariables){
-            if(knowVariables[i].symbol == symbol){
-                return i;
-            }
-        }
-        return false;
-    }
-
-    _getHighlightKnowVariables(r){
-        if(this.options.knowVariables){
-            if(this.getAliasKnowSymbol(r)){
-                return '<span class="cui-var">'+r+'</span>';
-            }
-        }
-        return false;
-    }
-
-    _getHighlightKnowAtoms(m,r,c){
-        if(this.options.knowAtoms){
-            return m[0]+'<span class="cui-atom">'+m.substring(1, m.length-1)+'</span>'+m[m.length-1];
-        }
-        return false;
-    }
-
+    /**
+     * setKnowVariables - set know variables to aliasing and highlight
+     *
+     * @param  {type} list list of know variables
+     * @return {void}
+     */
     setKnowVariables(list){
         if(list){
             var knowVariablesReg=[], knowVariablesAliasReg=[];
@@ -314,7 +275,7 @@ Cluster.Ui.Input = class Input extends Cluster.Ui.Component{
 
 
     /**
-     * compile -
+     * compile
      * @description After each change of the input field, this function is called and compiles the entered expression.
          If it returns an error the event "error" is launched, otherwise if all happens normally the event "success" is launched.
          The method will store a value in "this.compiled" that can be evaluated by the getter "value",
@@ -335,7 +296,6 @@ Cluster.Ui.Input = class Input extends Cluster.Ui.Component{
             // "_eval" store the evaluation of Math Library, here he is use for error debugging
             var _eval;
 
-            console.log(this.type, this.unit, this.textContent);
             // If the field is empty
             if(this.textContent == ""){
                 // If a default value is define, compile and store it.
@@ -349,7 +309,7 @@ Cluster.Ui.Input = class Input extends Cluster.Ui.Component{
             }
             else{
                 // Precompile, Compile and Eval for debugging
-                out = this.textContent.replace(new RegExp(this.knowVariablesReg, 'gi'), (r) => build.getVariableKnowSymbol(r).value);
+                out = this.textContent.replace(new RegExp(this.knowVariablesReg, 'gi'), (r) => Input.getVariableKnowSymbol(this, r).value);
                 compiled = math.compile(out);
                 _eval = compiled.eval();
             }
@@ -469,6 +429,120 @@ Cluster.Ui.Input = class Input extends Cluster.Ui.Component{
         this.setAttribute('default', v || false);
         // Update the compilation
         this.compile();
+    }
+
+    /**
+     * @static getHighlightKnowMethods - get html for method name
+     *
+     * @param  {Cluster.Ui.Input} input       cluster-input object
+     * @param  {string} r           method name
+     * @return {string}             html content
+     */
+    static getHighlightKnowMethods(input, r){
+        if(input.options.knowMethods){
+            if(input.options.knowMethods.indexOf(r)!=-1){
+                return '<span class="cui-method know">'+r+'</span>(';
+            }
+        }
+        return '<span class="cui-method unknow">'+r+'</span>(';
+    }
+
+
+    /**
+     * @static getSymbolKnowAlias - get symbol of knowVariables from it alias
+     *
+     * @param  {Cluster.Ui.Input} input         cluster-input object
+     * @param  {string} alias         alias like 'pi'
+     * @return {char}                 utf8 char symbol like 'π'
+     */
+    static getSymbolKnowAlias(input, alias){
+        alias = alias.toLowerCase();
+        if(input.options.knowVariables[alias]){
+            return input.options.knowVariables[alias].symbol;
+        }
+        return false;
+    }
+
+
+    /**
+     * @static getVariableKnowAlias - get variable object from alias
+     *
+     * @param  {Cluster.Ui.Input} input    cluster-input object
+     * @param  {string} alias    alias like 'pi'
+     * @return {object}          the variable object
+     */
+    static getVariableKnowAlias(input, alias){
+        alias = alias.toLowerCase();
+        var r;
+        if(r = input.options.knowVariables[alias]) return r;
+        return false;
+    }
+
+
+
+    /**
+     * @static getVariableKnowSymbol - get variable from symbol
+     *
+     * @param  {Cluster.Ui.Input} input  cluster-input object
+     * @param  {char} symbol utf8 char symbol like 'π'
+     * @return {object}      the variable object
+     */
+    static getVariableKnowSymbol(input, symbol){
+        var knowVariables = input.options.knowVariables;
+        for (var i in knowVariables){
+            if(knowVariables[i].symbol == symbol){
+                return knowVariables[i];
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @static getAliasKnowSymbol - get alias from symbol
+     *
+     * @param  {Cluster.Ui.Input} input  cluster-input object
+     * @param  {char}   symbol utf8 char symbol like 'π'
+     * @return {string}        alias like 'pi'
+     */
+    static getAliasKnowSymbol(input, symbol){
+        var knowVariables = input.options.knowVariables;
+        for (var i in knowVariables){
+            if(knowVariables[i].symbol == symbol){
+                return i;
+            }
+        }
+        return false;
+    }
+
+
+    /**
+     * @static getHighlightKnowVariables - get html for variable name
+     *
+     * @param  {Cluster.Ui.Input} input cluster-input object
+     * @param  {string} r   variable name
+     * @return {string}                 html content
+     */
+    static getHighlightKnowVariables(input, r){
+        if(input.options.knowVariables){
+            if(Input.getAliasKnowSymbol(input, r)){
+                return '<span class="cui-var">'+r+'</span>';
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @static getHighlightKnowAtoms - get html for atom name
+     *
+     * @param  {Cluster.Ui.Input} input cluster-input object
+     * @param  {string}           name  atom name
+     * @return {string}                 html content
+     */
+    static getHighlightKnowAtoms(input, name){
+        if(input.options.knowAtoms){
+            return name[0]+'<span class="cui-atom">'+name.substring(1, name.length-1)+'</span>'+name[name.length-1];
+        }
+        return false;
     }
 
 }
