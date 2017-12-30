@@ -14,7 +14,7 @@ The element has the tag "cluster-input" and that class is inherited from the con
 **In HTML language:**
 
 ```HTML
-<cluster-input type='number'></cluster-input>
+<cluster-input type='length' unit='cm' default='3inch'></cluster-input>
 ```
 
 **In javascript language:**
@@ -24,7 +24,9 @@ var input = new Cluster.Ui.Input('number');
 // or
 var input = document.createElement('cluster-input');
 
-input.type = 'number';
+input.type = 'length'; // 'number' by default
+input.unit = 'cm'; // optional
+input.default = '300'; // optional
 
 ```
 
@@ -33,6 +35,7 @@ It supports several attributes:
 - `type` : indicates the type of expected measure*
 - `unit` : indicates the unit expected. If false, the value returned is that of the unit entered by the user.
 Otherwise the unit returned will be the one specified, the result will be calculated using the unit conversion function of the library math.js
+- `default` : Specify a value to use if the field is empty.
 
 *List of types:
 
