@@ -1,6 +1,4 @@
-# cluster-ui
-
-<img src='./../logo.png' style='display:block;margin:auto;' width='200'/>
+<h1><img src='./../logo.png' style='display:inline-block' width='50'/> cluster-ui</h1>
 
 ### cluster-ui-input
 
@@ -11,24 +9,30 @@ This component is made to support user mathematical expressions. It bases its co
 
 The element has the tag "cluster-input" and that class is inherited from the constructor `Ui.Component`.
 
-**In HTML language:**
+**In HTML:**
 
 ```HTML
-<cluster-input type='length' unit='cm' default='3inch'></cluster-input>
+<cluster-input type='length' unit='cm' default='1inch'></cluster-input>
 ```
 
-**In javascript language:**
+**In JavaScript:**
 
 ```Javascript
 var input = new Cluster.Ui.Input('number');
 // or
 var input = document.createElement('cluster-input');
 
-input.type = 'length'; // 'number' by default
-input.unit = 'cm'; // optional
-input.default = '300'; // optional
+input.type = 'length';
+input.unit = 'cm';
+input.default = '1inch';
 
 ```
+
+Here's what it would look like with this code:
+
+<img alt='illustration for length type' src='./cluster-ui-input/cluster-ui-input-length.gif'/>
+
+***As you can see the value of the getter `value` is always expressed in centimeters, it is related to the fact that you have defined the value of `input.unit` to `"cm"`***
 
 It supports several attributes:
 - `contenteditable` : disable or enable the component
