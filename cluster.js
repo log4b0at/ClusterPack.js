@@ -1,4 +1,5 @@
 /*jshint esversion: 6*/
+
 var Cluster = {
     'version': '0.0.1',
     'versiontype': 'alpha',
@@ -157,4 +158,33 @@ Cluster.Ui = {
     }
 };
 
+Cluster.cssList = [];
+
+/**
+ * css - Add css file to header dynamicly.
+ *
+ * @param  {string} filename The file name
+ * @return {bool}
+ */
+Cluster.css = function(filename){
+    var fileref=document.createElement("link")
+        fileref.setAttribute("rel", "stylesheet")
+        fileref.setAttribute("type", "text/css")
+        fileref.setAttribute("href", filename);
+
+    if (typeof fileref!="undefined" && Cluster.cssList.indexOf(filename) == -1){
+        try{
+            document.getElementsByTagName("head")[0].appendChild(fileref);
+            Cluster.cssList.push(fileref);
+            return true;
+        }
+        catch(err){
+            throw err;
+        }
+    }
+    return false;
+}
+
 Cluster.Ui.className = Cluster.className+'-'+Cluster.Ui.classSuffix;
+
+export default Cluster;
