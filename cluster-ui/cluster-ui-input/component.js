@@ -1,6 +1,9 @@
 /*jshint esversion: 6*/
 
-Cluster.need('Ui.Component');
+'use strict';
+import math from '../lib/math/math.js';
+import Cluster from '../../cluster.js';
+import Component from '../component';
 
 function createRange(node, chars, range) {
     if (!range) {
@@ -36,9 +39,7 @@ function createRange(node, chars, range) {
 function setCurrentCursorPosition(element,chars) {
     if (chars >= 0) {
         var selection = window.getSelection();
-
-
-        range = createRange(element, { count: chars });
+        var range = createRange(element, { count: chars });
 
         if (range) {
             range.collapse(false);
@@ -92,7 +93,7 @@ function getCurrentCursorPosition(parent) {
 };
 
 
-Cluster.Ui.Input = class Input extends Cluster.Ui.Component{
+export default class Input extends Component{
     constructor(){
         super();
         this.compiled = null;
@@ -547,11 +548,11 @@ Cluster.Ui.Input = class Input extends Cluster.Ui.Component{
 
 }
 
-Cluster.Ui.Input.tag = 'input';
+Cluster.css('cluster-ui/cluster-ui-input/stylesheets/component.css');
 
-Cluster.Ui.define(Cluster.Ui.Input);
+Input.tag = 'input';
 
-var Input = Cluster.Ui.Input;
+Cluster.Ui.define(Input);
 
 Input.classSuffix = 'input';
 Input.className = Cluster.Ui.className+'-'+Input.classSuffix;
