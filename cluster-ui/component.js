@@ -1,6 +1,8 @@
 /*jshint esversion: 6*/
 
-Cluster.Ui.Component = class Component extends HTMLElement{
+import Cluster from '../cluster';
+
+export default class Component extends HTMLElement{
     constructor(options={}){
         super();
         this.options = options;
@@ -19,7 +21,6 @@ Cluster.Ui.Component = class Component extends HTMLElement{
 }
 
 
-var Component = Cluster.Ui.Component;
 Component.count = 0;
 
 Component.tag = 'component';
