@@ -1,0 +1,28 @@
+{
+  "name": "clusterpack",
+  "version": "0.0.1",
+  "description": "A list of efficient and ergonomic software supplies.",
+  "main": "clusterpack.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/log4b0at/cluster.git"
+  },
+  "keywords": [
+    "clusterpack",
+    "components",
+    "software",
+    "dev",
+    "interact",
+    "interactive",
+    "ergonomic"
+  ],
+  "author": "log4b0at",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/log4b0at/cluster/issues"
+  },
+  "homepage": "https://github.com/log4b0at/cluster#readme"
+}
