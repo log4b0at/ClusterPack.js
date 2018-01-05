@@ -1,0 +1,11 @@
+cluster-termhelp {
+    outline:none;
+}
+
+cluster-termhelp:hover{
+    text-decoration: underline;
+}
+
+cluster-helper.termhelp-helper{
+    max-width: 300px;
+}
