@@ -1,0 +1,29 @@
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <link rel="stylesheet" href="./../test/style.css"/>
+        <link rel="stylesheet" href="stylesheets/component.css"/>
+    </head>
+    <body>
+        <h2>CLUSTER-UI-TERMHELP</h2>
+        <div id='test'>
+        </div>
+        <hr />
+        <pre id='code'>NOTHING HERE!</pre>
+    </body>
+
+    <script src='component.js' type='module'></script>
+    <script>var test = document.getElementById('test');</script>
+    <script id='component_code'>
+
+        var e = document.createElement('cluster-termhelp');
+
+        e.textContent = "Object-Oriented Programmation";
+
+        test.appendChild(e);
+
+    </script>
+    <script>
+        document.getElementById('code').textContent = document.getElementById('component_code').innerHTML;
+    </script>
+</html>
