@@ -2,7 +2,7 @@
 
 ### cluster-ui-input
 
-<img alt='illustration' src='./cluster-ui-input/cluster-ui-input.gif'/>
+<img alt='illustration' src='./cluster-ui-input/docassets/cluster-ui-input.gif'/>
 
 This component is made to support user mathematical expressions. It bases its compilation of the expressions on the library math.js.
 <a href='http://mathjs.org'>http://mathjs.org</a>
@@ -30,7 +30,7 @@ input.default = '1inch';
 
 Here's what it would look like with this code:
 
-<img alt='illustration for length type' src='./cluster-ui-input/cluster-ui-input-length.gif'/>
+<img alt='illustration for length type' src='./cluster-ui-input/docassets/cluster-ui-input-length.gif'/>
 
 ***As you can see the value of the getter `value` is always expressed in centimeters, it is related to the fact that you have defined the value of `input.unit` to `"cm"`***
 
