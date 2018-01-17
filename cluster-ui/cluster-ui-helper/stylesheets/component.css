@@ -14,9 +14,13 @@ cluster-helper {
     text-shadow: 0px 0px 2px #000000b0;
     z-index:21;
     min-width: 40px;
-    min-height: 30px;
-    max-width: 500px;
+    min-height: 12px;
+    max-width: 200px;
     max-height: 400px;
+}
+
+cluster-helper{
+    
 }
 
 cluster-helper .title{
@@ -36,68 +40,64 @@ cluster-helper .definition{
     padding: 5;
 }
 
-cluster-helper[arrow-position|=top]:before {
+
+cluster-helper[arrow-position|=top]:before,
+cluster-helper[arrow-position|=left]:before,
+cluster-helper[arrow-position|=bottom]:after,
+cluster-helper[arrow-position|=right]:after
+{
+    --size: 12px;
     content: '';
     position: absolute;
-    top: -12px;
-    left: 6px;
     width: 0;
     height: 0;
-    border-bottom: 12px solid #272727;
-    border-left: 12px solid transparent;
-    border-right: 12px solid transparent;
-    z-index: 20;
+    border-left: var(--size) solid transparent;
+    border-right: var(--size) solid transparent;
+}
+cluster-helper[arrow-position|=top]:before {
+    top: calc(0px - var(--size));
+    left: calc(var(--size) / 2);
+    border-bottom: var(--size) solid #272727;
 }
 
 cluster-helper[arrow-position|=bottom]:after {
-    content: '';
-    position: absolute;
     bottom: -12px;
     left: 6px;
-    width: 0;
-    height: 0;
-    border-top: 12px solid #272727;
-    border-left: 12px solid transparent;
-    border-right: 12px solid transparent;
-    z-index: 20;
+    border-top: var(--size) solid #272727;
 }
 cluster-helper[arrow-position|=left]:before{
   transform: rotate(90deg);
-  left: -18px;
-  content: '';
-  position: absolute;
-  width: 0;
-  height: 0;
-  border-top: 12px solid #272727;
-  border-left: 12px solid transparent;
-  border-right: 12px solid transparent;
-  z-index: 20;
+  left: calc(0px - var(--size) * 1.5);
+  border-top: var(--size) solid #272727;
 }
 cluster-helper[arrow-position|=right]:after{
   transform: rotate(270deg);
-  right: -18px;
-  content: '';
-  position: absolute;
-  width: 0;
-  height: 0;
-  border-top: 12px solid #272727;
-  border-left: 12px solid transparent;
-  border-right: 12px solid transparent;
-  z-index: 20;
+  right: calc(0px - var(--size) * 1.5);
+  border-top: var(--size) solid #272727;
 }
 
-cluster-helper[arrow-position=top-center]:before{ left:calc(50% - 6px); }
-cluster-helper[arrow-position=top-left]:before{ left:calc(10px); }
-cluster-helper[arrow-position=top-right]:before{ left:calc(100% - 32px); }
-cluster-helper[arrow-position=bottom-center]:after{ left:calc(50% - 12px); }
-cluster-helper[arrow-position=bottom-left]:after{ left:calc(10px); }
+cluster-helper[arrow-size=small]{
+    --size: 6px;
+}
+cluster-helper[arrow-size=medium]{
+    --size: 9px;
+}
+cluster-helper[arrow-size=big]{
+    --size: 12px;
+}
 
-cluster-helper[arrow-position=left-top]:before{ top:12px; }
-cluster-helper[arrow-position=left-center]:before{ top: calc(50% - 6px); }
-cluster-helper[arrow-position=left-bottom]:before{ bottom:12px; }
-cluster-helper[arrow-position=right-top]:after{ top: 12px; }
-cluster-helper[arrow-position=right-center]:after{ top: calc(50% - 6px); }
-cluster-helper[arrow-position=right-bottom]:after{ bottom:12px; }
+cluster-helper[arrow-position=top-center]:before{ left:calc(50% - var(--size) / 2); }
+cluster-helper[arrow-position=top-left]:before{ left:calc(var(--size) / 2); }
+cluster-helper[arrow-position=top-right]:before{ right: calc(var(--size) / 2); }
+cluster-helper[arrow-position=bottom-center]:after{ left:calc(50% - var(--size)); }
+cluster-helper[arrow-position=bottom-left]:after{ left:calc(var(--size) / 2); }
+
+cluster-helper[arrow-position=left-top]:before{ top: var(--size); }
+cluster-helper[arrow-position=left-center]:before{ top: calc(50% - var(--size) / 2); }
+cluster-helper[arrow-position=left-bottom]:before{ bottom: var(--size); }
+cluster-helper[arrow-position=right-top]:after{ top: var(--size); }
+cluster-helper[arrow-position=right-center]:after{ top: calc(50% - var(--size) / 2); }
+cluster-helper[arrow-position=right-bottom]:after{ bottom: var(--size); }
 
 cluster-helper .definition::-webkit-scrollbar {
   width: 9px;
@@ -116,7 +116,7 @@ cluster-helper .definition::-webkit-scrollbar-thumb:hover {
   background: #ffffff;
 }
 cluster-helper .definition::-webkit-scrollbar-thumb:active {
-  background: #000000;
+  background: #666;
 }
 cluster-helper .definition::-webkit-scrollbar-track {
   background: #666666;
