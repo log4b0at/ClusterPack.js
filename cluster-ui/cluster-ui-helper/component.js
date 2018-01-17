@@ -4,6 +4,11 @@ import Cluster from '../../cluster';
 import Component from '../component';
 
 
+/*
+    * All stuff needed for the future:
+    * Auto-Repositionning on window-resizing
+*/
+
 /**
  * @class Helper
  * @desc A helper popup component
@@ -15,6 +20,9 @@ export default class Helper extends Component {
         super();
 
         this.events   = [];
+        this.elements = [];
+
+        this.eventHandler = {};
 
         this.events.mousedown = (e) => {e.stopPropagation(); e.preventDefault()};
 
@@ -48,9 +56,9 @@ export default class Helper extends Component {
     showAt(at) {
         if (at instanceof HTMLElement){
 
-            let storePosition = this.style.position;
+            //let storePosition = this.style.position;
 
-            this.style.position = "";
+            //this.style.position = "";
 
             let top = at.offsetTop,     // Top position of the element
                 left = at.offsetLeft,   // Left position of the element
@@ -62,7 +70,7 @@ export default class Helper extends Component {
 
                 arrowpos = ""; // A variable to store the determination of the "arrow-position" attribute
 
-            this.style.position = storePosition;
+            //this.style.position = storePosition;
 
             /*
             The component is displayed before calculating its position, for technical reasons.
@@ -155,6 +163,48 @@ export default class Helper extends Component {
         }
     }
 
+    set eventShow(value){
+        if(this.eventHandler['show']){
+            if(this.eventHandler['show'].handler){
+                this.linked.removeEventListener(this.eventHandler['show'].event, this.eventHandler['show'].handler);
+            }
+        }
+        this.eventHandler['show'] = { event: value, handler: () => this.show() } ;
+        this.linked.addEventListener(value, this.eventHandler['show'].handler);
+    }
+
+    set eventHide(value){
+        if(this.eventHandler['hide']){
+            if(this.eventHandler['hide'].handler){
+                this.linked.removeEventListener(this.eventHandler['hide'].event, this.eventHandler['hide'].handler);
+            }
+        }
+        this.eventHandler['hide'] = { event: value, handler: () => this.hide() } ;
+        this.linked.addEventListener(value, this.eventHandler['hide'].handler);
+    }
+
+    link(element, eventShow, eventHide){
+        var build = this;
+        this.linked = element;
+        if(eventShow){
+            this.eventShow = eventShow;
+        }
+        if(eventHide){
+            this.eventHide = eventHide;
+        }
+    }
+
+    unlink(element){
+        element = element || this.linked;
+        if(element){
+            for(let i in this.eventHandler){
+                this.linked.removeEventListener(i, this.eventHandler[i]);
+            }
+            this.eventHandler = {};
+            this.linked = undefined;
+        }
+    }
+
 
     /**
      * set align - A attribute-linked property for alignment
@@ -203,26 +253,26 @@ export default class Helper extends Component {
 
 
     /**
-     * show - Apply a fade in display on the component
+     * show - Show the helper at the linked
      * @public
      *
      * @param  {number} [time] The time that the animation must take
      * @memberof Helper
      * @return {void}
      */
-    show(time){
-        Helper.animateShow(this, time);
+    show(){
+        this.showAt(this.linked);
     }
 
     /**
-     * hide - Apply a fade out hide on the component
+     * hide - Hide the helper
      *
      * @param  {number} [time] The time that the animation must take
      * @memberof Helper
      * @return {void}
      */
-    hide(time){
-        Helper.animateHide(this, time);
+    hide(){
+        Helper.animateHide(this, 200);
     }
 
     /**
@@ -277,9 +327,59 @@ export default class Helper extends Component {
 
 }
 
+function updateHelper(element){
+    if(!element.helper){
+        element.helper = document.createElement('cluster-helper');
+        element.helper.link(element, 'mouseover', 'mouseout');
+    }
+}
 
-Helper.tag = "helper";
+function updateHelperDescription(element, value){
+    if(!element.helper.elements.description){
+        let description = document.createElement('div');
+        description.className = "definition";
+        description.textContent = value;
+        element.helper.elements.description = description;
+        element.helper.appendChild(description);
+    }
+    else{
+        let description = element.helper.elements.description;
+        description.textContent = value;
+    }
+}
 
-Cluster.css(Helper.path+'/stylesheets/component.css');
+function updateHelperTitle(element, value){
+    if(!element.helper.elements.title){
+        let title = document.createElement('div');
+        title.className = "title";
+        title.textContent = value;
+        element.helper.elements.title = title;
+        element.helper.appendChild(title);
+    }
+    else{
+        let title = element.helper.elements.title;
+        title.textContent = value;
+    }
+}
 
-Cluster.Ui.define(Helper);
+Component.registerAttribute("helper-description", function(element, oldvalue, value) {
+    updateHelper(element);
+    updateHelperDescription(element, value);
+});
+
+Component.registerAttribute("helper-title", function(element, oldvalue, value) {
+    updateHelper(element);
+    updateHelperTitle(element, value);
+});
+
+Component.registerAttribute("helper-event-show", function(element, oldvalue, value) {
+    if(element.helper) element.helper.eventShow = value;
+});
+
+Component.registerAttribute("helper-event-hide", function(element, oldvalue, value) {
+    if(element.helper) element.helper.eventHide = value;
+});
+
+Helper.css('component.css');
+
+Helper.define();
